@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-6 offset-md-3">
+        <form id="search-form" class="form-inline justify-content-center">
+            <input type="text" name="pokemon_name" class="form-control mr-2" placeholder="Enter Pokemon name">
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <div id="evolution-chain" class="mt-4 text-center"></div>
+    </div>
+</div>
+{% endblock %}
