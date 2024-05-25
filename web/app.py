@@ -1,6 +1,5 @@
 from flask import Flask, jsonify, render_template, request
-
-from web.models import get_evo_chain, get_pokemon_data
+from models import get_evo_chain, get_pokemon_data
 
 app = Flask(__name__)
 
@@ -19,3 +18,7 @@ def search():
     pokemon_id = data["id"]
     evolution_chain = get_evo_chain(pokemon_id)
     return jsonify({"data": data, "evolution_chain": evolution_chain})
+
+
+if __name__ == "__main__":
+    app.run(debug=True)

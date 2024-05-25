@@ -21,29 +21,49 @@ async function displayEvolutionChain(chain) {
     container.innerHTML = '';
 
     let current = chain;
-    let previousPokemonName = null;
     while (current) {
         const pokemonName = current.species.name;
+        const pokemonData = await getPokemonData(pokemonName);
+        container.appendChild(createPokemonCard(pokemonData));
 
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
-        const data = await response.json();
+        if (current.evolves_to.length > 1) {
+            for (let i = 0; i < current.evolves_to.length; i++) {
+                const nextPokemonName = current.evolves_to[i].species.name;
+                const nextPokemonData = await getPokemonData(nextPokemonName);
+                container.appendChild(createPokemonCard(nextPokemonData));
+            }
+            break;
+        }
 
-        const div = document.createElement('div');
-        div.className = 'evolution-step';
-        div.style.textAlign = 'left';
-
-        const img = document.createElement('img');
-        img.src = data.sprites.front_default;
-        div.appendChild(img);
-
-        const a = document.createElement('a');
-        a.href = `https://pokeapi.co/api/v2/pokemon/${pokemonName}`;
-        a.textContent = pokemonName;
-        div.appendChild(a);
-
-        container.appendChild(div);
-
-        previousPokemonName = pokemonName;
         current = current.evolves_to[0];
     }
+}
+
+function getPokemonData(pokemonName) {
+    return fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`)
+        .then(response => response.json())
+        .catch(error => console.error('Error:', error));
+}
+
+function createPokemonCard(pokemon) {
+    const div = document.createElement('div');
+    div.className = 'card m-2';
+    div.style.width = '8rem';
+
+    const img = document.createElement('img');
+    img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${pokemon.id}.png`;
+    img.className = 'card-img-top';
+
+    const body = document.createElement('div');
+    body.className = 'card-body p-2';
+
+    const title = document.createElement('h6');
+    title.className = 'card-title text-capitalize';
+    title.textContent = pokemon.species.name;
+
+    body.appendChild(title);
+    div.appendChild(img);
+    div.appendChild(body);
+
+    return div;
 }
